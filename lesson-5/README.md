@@ -28,8 +28,9 @@ lesson-5/
 ## AWS CLI Configuration
 
 Before using Terraform, configure your AWS CLI with the appropriate credentials and region:
-
+```
 aws configure
+```
 You will be prompted to enter:
 
 AWS Access Key ID
@@ -45,21 +46,21 @@ Terraform Commands
 Use the following commands in the root directory (lesson-5) to manage your infrastructure:
 
 Initialize Terraform and download providers:
-
+```
 terraform init
-
+```
 Preview the changes Terraform will apply:
-
+```
 terraform plan
-
+```
 Apply the planned changes and provision resources:
-
+```
 terraform apply
-
+```
 Destroy all provisioned infrastructure:
-
+```
 terraform destroy
-
+```
 ## Modules Explanation
 
 # s3-backend
