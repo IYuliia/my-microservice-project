@@ -3,30 +3,26 @@
 # Project Structure
 
 lesson-5/
-│
-├── main.tf # Main configuration file that connects modules
-├── backend.tf # Terraform backend configuration (S3 + DynamoDB)
-├── outputs.tf # Outputs from all modules
-│
-├── modules/ # Directory containing Terraform modules
-│ ├── s3-backend/ # Module for S3 bucket and DynamoDB for state management
-│ │ ├── s3.tf
-│ │ ├── dynamodb.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ ├── vpc/ # Module for VPC, subnets, gateways, and routing
-│ │ ├── vpc.tf
-│ │ ├── routes.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ └── ecr/ # Module for Elastic Container Registry
-│ ├── ecr.tf
-│ ├── variables.tf
-│ └── outputs.tf
-│
-└── README.md # Project documentation
+├── main.tf              # Main configuration file that connects modules
+├── backend.tf           # Terraform backend configuration (S3 + DynamoDB)
+├── outputs.tf           # Outputs from all modules
+├── modules/             # Directory containing Terraform modules
+│   ├── s3-backend/      # Module for S3 bucket and DynamoDB for state management
+│   │   ├── s3.tf
+│   │   ├── dynamodb.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   ├── vpc/             # Module for VPC, subnets, gateways, and routing
+│   │   ├── vpc.tf
+│   │   ├── routes.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   └── ecr/             # Module for Elastic Container Registry
+│       ├── ecr.tf
+│       ├── variables.tf
+│       └── outputs.tf
+└── README.md            # Project documentation
+
 
 
 ## AWS CLI Configuration
