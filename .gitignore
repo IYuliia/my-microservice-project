@@ -2,9 +2,12 @@
 venv/
 .venv/
 
-# Terraform state files
+# Ignore Terraform state files and local directories
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+.terraform/
+lesson-5/.terraform/
+
 
 # Terraform crash logs
 crash.log
