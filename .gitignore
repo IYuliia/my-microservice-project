@@ -1,0 +1,16 @@
+# Python virtual environments
+venv/
+.venv/
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Terraform crash logs
+crash.log
+
+# Mac OS files
+.DS_Store
+
+# IDE files (example for VSCode)
+.vscode/
