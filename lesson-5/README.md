@@ -1,7 +1,7 @@
 ## Lesson 5: Terraform AWS Infrastructure
 
 # Project Structure
-
+```
 lesson-5/
 ├── main.tf              # Main configuration file that connects modules
 ├── backend.tf           # Terraform backend configuration (S3 + DynamoDB)
@@ -22,7 +22,7 @@ lesson-5/
 │       ├── variables.tf
 │       └── outputs.tf
 └── README.md            # Project documentation
-
+```
 
 
 ## AWS CLI Configuration
