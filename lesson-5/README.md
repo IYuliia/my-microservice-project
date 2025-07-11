@@ -73,7 +73,7 @@ S3 bucket for storing Terraform state files with versioning enabled to keep hist
 
 DynamoDB table for state locking to prevent concurrent Terraform runs and state corruption.
 
-#vpc
+# vpc
 This module sets up the network infrastructure in AWS:
 
 Creates a VPC with a specified CIDR block.
@@ -86,7 +86,7 @@ Creates NAT Gateways to allow outbound internet access from private subnets.
 
 Configures route tables for public and private subnets.
 
-#ecr
+# ecr
 This module provisions an Elastic Container Registry:
 
 Creates an ECR repository to store Docker images.
