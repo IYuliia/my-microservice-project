@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "eu-central-1"
+}
+
 module "s3_backend" {
   source      = "./modules/s3-backend"
   bucket_name = "terraform-bucket-hw-devops-iyuliia"   
@@ -17,4 +21,11 @@ module "ecr" {
   source      = "./modules/ecr"
   ecr_name    = "lesson-5-ecr"
   scan_on_push = true
+}
+
+module "eks" {
+  source       = "./modules/eks"
+  region = "eu-central-1"
+  cluster_name = "my-eks-cluster"
+  subnet_ids   = module.vpc.private_subnet_ids
 }

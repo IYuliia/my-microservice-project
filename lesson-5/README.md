@@ -1,97 +1,85 @@
-## Lesson 5: Terraform AWS Infrastructure
+## Lesson 6 — Kubernetes Deployment with Terraform, ECR, and Helm
+# Проєкт: Деплой Django-застосунку в кластер Kubernetes на AWS
+# Структура проєкту
+```
+lesson-6/
+├── main.tf
+├── backend.tf
+├── outputs.tf
+├── modules/
+│   ├── s3-backend/
+│   ├── vpc/
+│   ├── ecr/
+│   └── eks/
+├── charts/
+│   └── django-app/
+│       ├── templates/
+│       │   ├── deployment.yaml
+│       │   ├── service.yaml
+│       │   ├── configmap.yaml
+│       │   └── hpa.yaml
+│       ├── values.yaml
+│       └── Chart.yaml
+```
+ 
+# Компоненти
+Kubernetes кластер (EKS) створено через Terraform у вже існуючій VPC.
 
-# Project Structure
+ECR репозиторій створено через Terraform, образ Django додано через Docker + AWS CLI.
 
-lesson-5/
-│
-├── main.tf # Main configuration file that connects modules
-├── backend.tf # Terraform backend configuration (S3 + DynamoDB)
-├── outputs.tf # Outputs from all modules
-│
-├── modules/ # Directory containing Terraform modules
-│ ├── s3-backend/ # Module for S3 bucket and DynamoDB for state management
-│ │ ├── s3.tf
-│ │ ├── dynamodb.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ ├── vpc/ # Module for VPC, subnets, gateways, and routing
-│ │ ├── vpc.tf
-│ │ ├── routes.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ └── ecr/ # Module for Elastic Container Registry
-│ ├── ecr.tf
-│ ├── variables.tf
-│ └── outputs.tf
-│
-└── README.md # Project documentation
+# Helm chart реалізує:
 
+Deployment з образом із ECR та підключенням ConfigMap
 
-## AWS CLI Configuration
+Service типу LoadBalancer для доступу до застосунку
 
-Before using Terraform, configure your AWS CLI with the appropriate credentials and region:
+HPA (Horizontal Pod Autoscaler) для автозбільшення кількості подів
 
-aws configure
-You will be prompted to enter:
+ConfigMap зі змінними середовища з теми 4
 
-AWS Access Key ID
+README.md з описом усіх етапів розгортання
 
-AWS Secret Access Key
-
-Default region name (e.g., us-west-2)
-
-Default output format (e.g., json)
-
-
-Terraform Commands
-Use the following commands in the root directory (lesson-5) to manage your infrastructure:
-
-Initialize Terraform and download providers:
-
+# Кроки розгортання
+1. Ініціалізація Terraform
+```
 terraform init
-
-Preview the changes Terraform will apply:
-
-terraform plan
-
-Apply the planned changes and provision resources:
-
+```
+2. Створення інфраструктури
+```
 terraform apply
+```
+⚠️ Переконайтесь, що у вас є правильні AWS credentials (aws configure або через ~/.aws/credentials).
 
-Destroy all provisioned infrastructure:
+3. Побудова та пуш Docker-образу
+```
+# Login to ECR
+aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.<region>.amazonaws.com
 
-terraform destroy
+# Build image
+docker buildx build -t <image-name>:latest .
 
-## Modules Explanation
+# Tag and push
+docker tag <image-name>:latest <repo-url>:latest
+docker push <repo-url>:latest
+```
+4. Деплой через Helm
+```
+helm upgrade --install django-app ./charts/django-app --namespace default
+```
+# Перевірка
+```
+# Перевірка подів
+kubectl get pods
 
-# s3-backend
-This module creates the AWS resources necessary to store Terraform state files remotely and enable state locking:
+# Сервіс із LoadBalancer
+kubectl get svc
 
-S3 bucket for storing Terraform state files with versioning enabled to keep history.
+# HPA
+kubectl get hpa
+```
+# Результат
+Доступ до застосунку через зовнішню IP-адресу (kubectl get svc).
 
-DynamoDB table for state locking to prevent concurrent Terraform runs and state corruption.
+Автомасштабування працює (HPA піднімає поди при навантаженні).
 
-#vpc
-This module sets up the network infrastructure in AWS:
-
-Creates a VPC with a specified CIDR block.
-
-Creates three public and three private subnets distributed across availability zones.
-
-Creates an Internet Gateway for public subnet internet access.
-
-Creates NAT Gateways to allow outbound internet access from private subnets.
-
-Configures route tables for public and private subnets.
-
-#ecr
-This module provisions an Elastic Container Registry:
-
-Creates an ECR repository to store Docker images.
-
-Enables automatic image scanning on push for security.
-
-Configures access policies for the repository.
-
+Django-застосунок використовує змінні середовища з ConfigMap.
