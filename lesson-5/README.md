@@ -1,8 +1,8 @@
-## Lesson 6 — Kubernetes Deployment with Terraform, ECR, and Helm
+## Lesson 7 — Kubernetes Deployment with Terraform, ECR, and Helm
 # Проєкт: Деплой Django-застосунку в кластер Kubernetes на AWS
 # Структура проєкту
 ```
-lesson-6/
+lesson-7/
 ├── main.tf
 ├── backend.tf
 ├── outputs.tf
