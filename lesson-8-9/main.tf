@@ -29,3 +29,23 @@ module "eks" {
   cluster_name = "my-eks-cluster"
   subnet_ids   = module.vpc.private_subnet_ids
 }
+
+module "jenkins" {
+  source = "./modules/jenkins"
+
+  kubeconfig_path = "~/.kube/config"
+  namespace       = "jenkins"
+  chart_repository = "https://charts.jenkins.io"
+  chart_name       = "jenkins"
+  chart_version    = "4.1.5" # або актуальна
+}
+
+module "argo_cd" {
+  source = "./modules/argo_cd"
+
+  kubeconfig_path  = "~/.kube/config"
+  namespace        = "argocd"
+  chart_repository = "https://argoproj.github.io/argo-helm"
+  chart_name       = "argo-cd"
+  chart_version    = "5.27.4"
+}
