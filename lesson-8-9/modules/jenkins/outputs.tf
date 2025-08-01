@@ -1,9 +1,7 @@
 output "jenkins_url" {
-  description = "URL of the Jenkins service"
-  value       = module.jenkins.jenkins_url
+  value = "http://jenkins.${var.namespace}.svc.cluster.local:8080"
 }
 
-output "admin_password" {
-  description = "Initial admin password for Jenkins"
-  value       = module.jenkins.admin_password
+output "jenkins_namespace" {
+  value = var.namespace
 }

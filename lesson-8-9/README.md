@@ -1,16 +1,65 @@
-## Lesson 7 — Kubernetes Deployment with Terraform, ECR, and Helm
-# Проєкт: Деплой Django-застосунку в кластер Kubernetes на AWS
-# Структура проєкту
+# CI/CD Pipeline with Jenkins, Helm, Terraform, and Argo CD
+## Project Overview
+This project implements a full CI/CD process using Jenkins, Helm, Terraform, and Argo CD for a Django application deployed on Kubernetes. The pipeline automates the following:
+
+Building a Docker image of the Django app.
+
+Publishing the Docker image to AWS Elastic Container Registry (ECR).
+
+Updating the Helm chart repository with the new image tag.
+
+Deploying and synchronizing the app in Kubernetes via Argo CD, which monitors the Helm chart repository for changes.
+
+## Project Structure
 ```
-lesson-7/
-├── main.tf
-├── backend.tf
-├── outputs.tf
-├── modules/
-│   ├── s3-backend/
-│   ├── vpc/
-│   ├── ecr/
-│   └── eks/
+lesson-8-9/
+│
+├── main.tf                  # Головний файл для підключення модулів
+├── backend.tf               # Налаштування бекенду для стейтів (S3 + DynamoDB
+├── outputs.tf               # Загальні виводи ресурсів
+│
+├── modules/                 # Каталог з усіма модулями
+│   ├── s3-backend/          # Модуль для S3 та DynamoDB
+│   │   ├── s3.tf            # Створення S3-бакета
+│   │   ├── dynamodb.tf      # Створення DynamoDB
+│   │   ├── variables.tf     # Змінні для S3
+│   │   └── outputs.tf       # Виведення інформації про S3 та DynamoDB
+│   │
+│   ├── vpc/                 # Модуль для VPC
+│   │   ├── vpc.tf           # Створення VPC, підмереж, Internet Gateway
+│   │   ├── routes.tf        # Налаштування маршрутизації
+│   │   ├── variables.tf     # Змінні для VPC
+│   │   └── outputs.tf  
+│   ├── ecr/                 # Модуль для ECR
+│   │   ├── ecr.tf           # Створення ECR репозиторію
+│   │   ├── variables.tf     # Змінні для ECR
+│   │   └── outputs.tf       # Виведення URL репозиторію
+│   │
+│   ├── eks/                      # Модуль для Kubernetes кластера
+│   │   ├── eks.tf                # Створення кластера
+│   │   ├── aws_ebs_csi_driver.tf # Встановлення плагіну csi drive
+│   │   ├── variables.tf     # Змінні для EKS
+│   │   └── outputs.tf       # Виведення інформації про кластер
+│   │
+│   ├── jenkins/             # Модуль для Helm-установки Jenkins
+│   │   ├── jenkins.tf       # Helm release для Jenkins
+│   │   ├── variables.tf     # Змінні (ресурси, креденшели, values)
+│   │   ├── providers.tf     # Оголошення провайдерів
+│   │   ├── values.yaml      # Конфігурація jenkins
+│   │   └── outputs.tf       # Виводи (URL, пароль адміністратора)
+│   │ 
+│   └── argo_cd/             # ✅ Новий модуль для Helm-установки Argo CD
+│       ├── jenkins.tf       # Helm release для Jenkins
+│       ├── variables.tf     # Змінні (версія чарта, namespace, repo URL тощо)
+│       ├── providers.tf     # Kubernetes+Helm.  переносимо з модуля jenkins
+│       ├── values.yaml      # Кастомна конфігурація Argo CD
+│       ├── outputs.tf       # Виводи (hostname, initial admin password)
+│		    └──charts/                  # Helm-чарт для створення app'ів
+│ 	 	    ├── Chart.yaml
+│	  	    ├── values.yaml          # Список applications, repositories
+│			    └── templates/
+│		        ├── application.yaml
+│		        └── repository.yaml
 ├── charts/
 │   └── django-app/
 │       ├── templates/
@@ -18,68 +67,73 @@ lesson-7/
 │       │   ├── service.yaml
 │       │   ├── configmap.yaml
 │       │   └── hpa.yaml
-│       ├── values.yaml
-│       └── Chart.yaml
+│       ├── Chart.yaml
+│       └── values.yaml     # ConfigMap зі змінними середовища
 ```
- 
-# Компоненти
-Kubernetes кластер (EKS) створено через Terraform у вже існуючій VPC.
 
-ECR репозиторій створено через Terraform, образ Django додано через Docker + AWS CLI.
+## Terraform Workflow
+Run these commands to provision all infrastructure components:
 
-# Helm chart реалізує:
-
-Deployment з образом із ECR та підключенням ConfigMap
-
-Service типу LoadBalancer для доступу до застосунку
-
-HPA (Horizontal Pod Autoscaler) для автозбільшення кількості подів
-
-ConfigMap зі змінними середовища з теми 4
-
-README.md з описом усіх етапів розгортання
-
-# Кроки розгортання
-1. Ініціалізація Terraform
 ```
 terraform init
+terraform validate
+terraform apply -auto-approve
 ```
-2. Створення інфраструктури
-```
-terraform apply
-```
-⚠️ Переконайтесь, що у вас є правильні AWS credentials (aws configure або через ~/.aws/credentials).
 
-3. Побудова та пуш Docker-образу
-```
-# Login to ECR
-aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.<region>.amazonaws.com
+terraform init — initializes Terraform working directory and backend.
 
-# Build image
-docker buildx build -t <image-name>:latest .
+terraform validate — checks syntax and configuration correctness.
 
-# Tag and push
-docker tag <image-name>:latest <repo-url>:latest
-docker push <repo-url>:latest
-```
-4. Деплой через Helm
-```
-helm upgrade --install django-app ./charts/django-app --namespace default
-```
-# Перевірка
-```
-# Перевірка подів
-kubectl get pods
+terraform apply — deploys resources defined in Terraform configurations (Jenkins, Argo CD, EKS, ECR, etc).
 
-# Сервіс із LoadBalancer
-kubectl get svc
+## Accessing Services
 
-# HPA
-kubectl get hpa
+Jenkins UI:
+URL: http://<jenkins-url> (check Terraform output)
+Default Admin Password: (from Terraform output jenkins_admin_password)
+
+Argo CD UI:
+URL: http://<argocd-url> (from Terraform output)
+Default Admin Password: (from Terraform output argocd_admin_password)
+
+## Jenkins Pipeline Usage
+
+The Jenkins pipeline is configured via Jenkinsfile to:
+
+Build the Django app Docker image using Kaniko agent.
+
+Push the image to AWS ECR.
+
+Update the Helm chart’s values.yaml with the new Docker image tag.
+
+Commit and push changes back to the Helm chart Git repository.
+
+Trigger the pipeline manually from Jenkins UI or configure webhook triggers.
+
+## Argo CD Application
+
+Argo CD monitors the Helm chart Git repository.
+
+When Helm chart updates are pushed (by Jenkins pipeline), Argo CD automatically syncs changes and deploys the updated app to Kubernetes.
+
+You can check Argo CD app status using:
+
 ```
-# Результат
-Доступ до застосунку через зовнішню IP-адресу (kubectl get svc).
+argocd app get <app-name>
+argocd app sync <app-name>
+```
 
-Автомасштабування працює (HPA піднімає поди при навантаженні).
+## Notes & Troubleshooting
 
-Django-застосунок використовує змінні середовища з ConfigMap.
+Ensure your local kubeconfig has access to the Kubernetes cluster.
+
+Jenkins requires AWS credentials with ECR push permissions.
+
+Argo CD needs permissions to access your Helm chart Git repository.
+
+Check pod statuses for Jenkins and Argo CD in their respective namespaces:
+
+```
+kubectl get pods -n jenkins
+kubectl get pods -n argocd
+```

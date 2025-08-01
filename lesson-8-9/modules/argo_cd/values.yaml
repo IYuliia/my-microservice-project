@@ -1,28 +1,8 @@
 server:
   service:
     type: LoadBalancer
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "500m"
-    limits:
-      memory: "1Gi"
-      cpu: "1"
-
-controller:
-  resources:
-    requests:
-      memory: "256Mi"
-      cpu: "250m"
-    limits:
-      memory: "512Mi"
-      cpu: "500m"
-
-repoServer:
-  resources:
-    requests:
-      memory: "256Mi"
-      cpu: "250m"
-    limits:
-      memory: "512Mi"
-      cpu: "500m"
+  extraArgs:
+    - "--insecure"
+configs:
+  secret:
+    argocdServerAdminPassword: "$2a$12$hashedpasswordhere"

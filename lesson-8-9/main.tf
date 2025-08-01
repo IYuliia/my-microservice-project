@@ -2,6 +2,19 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+provider "kubernetes" {
+  host                   = module.eks.endpoint
+  cluster_ca_certificate = base64decode(module.eks.kubeconfig_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1alpha1"
+    command     = "aws"
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+  }
+}
+
+
+
 module "s3_backend" {
   source      = "./modules/s3-backend"
   bucket_name = "terraform-bucket-hw-devops-iyuliia"   
@@ -31,18 +44,19 @@ module "eks" {
 }
 
 module "jenkins" {
-  source = "./modules/jenkins"
-
-  kubeconfig_path = "~/.kube/config"
-  namespace       = "jenkins"
-  chart_repository = "https://charts.jenkins.io"
-  chart_name       = "jenkins"
-  chart_version    = "4.1.5" # або актуальна
+  source      = "./modules/jenkins"
+  
+  namespace          = "jenkins"
+  jenkins_admin_password = "StrongPassword123"
+  kubeconfig_path    = "~/.kube/config"
+  chart_repository   = "https://charts.jenkins.io"
+  chart_name         = "jenkins"
+  chart_version      = "4.1.5"
 }
 
 module "argo_cd" {
-  source = "./modules/argo_cd"
-
+  source      = "./modules/argo_cd"
+  
   kubeconfig_path  = "~/.kube/config"
   namespace        = "argocd"
   chart_repository = "https://argoproj.github.io/argo-helm"

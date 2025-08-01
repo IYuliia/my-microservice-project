@@ -42,4 +42,3 @@ autoscaling:
 
 imagePullSecrets:
   - name: regcred
-

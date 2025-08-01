@@ -1,19 +1,31 @@
-variable "namespace" {
+variable "jenkins_admin_password" {
+  description = "Password for Jenkins admin user"
   type        = string
-  description = "Namespace для Jenkins"
-  default     = "jenkins"
+}
+
+variable "kubeconfig_path" {
+  description = "Path to kubeconfig"
+  type        = string
+  default     = "~/.kube/config"
+}
+
+variable "chart_repository" {
+  description = "Helm chart repository URL"
+  type        = string
+}
+
+variable "chart_name" {
+  description = "Helm chart name"
+  type        = string
 }
 
 variable "chart_version" {
+  description = "Helm chart version"
   type        = string
-  description = "Версія Helm чарта Jenkins"
-  default     = "3.5.5"
 }
 
-variable "jenkins_admin_password" {
+variable "namespace" {
+  description = "Namespace to deploy Jenkins"
   type        = string
-  description = "Пароль адміністратора Jenkins"
-  default     = "changeme"
+  default     = "jenkins"
 }
-
-

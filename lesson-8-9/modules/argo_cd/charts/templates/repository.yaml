@@ -1,8 +1,11 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Repository
+apiVersion: v1
+kind: Secret
 metadata:
-  name: example-repo
-  namespace: {{ .Release.Namespace }}
-spec:
-  url: https://github.com/example/repo.git
-  type: git
+  name: git-creds
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://github.com/your-org/helm-charts.git
+  username: gituser
+  password: yourpassword
