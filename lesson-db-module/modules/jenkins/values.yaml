@@ -1,0 +1,20 @@
+controller:
+  admin:
+    username: admin
+    password: "${JENKINS_ADMIN_PASSWORD}"
+
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - configuration-as-code:latest
+    - docker-workflow:latest
+    - blueocean:latest
+
+agent:
+  enabled: true
+  podTemplates:
+    kaniko:
+      image: gcr.io/kaniko-project/executor:latest
+      command: ""
+      args: ""
