@@ -63,3 +63,16 @@ module "argo_cd" {
   chart_name       = "argo-cd"
   chart_version    = "5.27.4"
 }
+
+module "rds" {
+  source         = "./modules/rds"
+  use_aurora     = true
+  db_engine      = "postgres"
+  engine_version = "14.9"
+  instance_class = "db.t3.medium"
+  db_name        = "exampledb"
+  db_username    = "admin"
+  db_password    = "YourStrongPassword123!"
+  subnet_ids     = module.vpc.private_subnets
+  vpc_id         = module.vpc.vpc_id
+}
