@@ -1,8 +1,0 @@
-server:
-  service:
-    type: LoadBalancer
-  extraArgs:
-    - "--insecure"
-configs:
-  secret:
-    argocdServerAdminPassword: "$2a$12$hashedpasswordhere"
