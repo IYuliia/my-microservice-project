@@ -2,78 +2,69 @@
 
 ## Project Structure
 
-Project/
-│
-├── main.tf # Main Terraform file for module connections
-├── backend.tf # Backend config for Terraform state (S3 + DynamoDB)
-├── outputs.tf # Common outputs for deployed resources
-│
-├── modules/ # All Terraform modules
-│ ├── s3-backend/ # S3 and DynamoDB backend storage
-│ │ ├── s3.tf
-│ │ ├── dynamodb.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ ├── vpc/ # VPC and networking
-│ │ ├── vpc.tf
-│ │ ├── routes.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ ├── ecr/ # AWS ECR for container images
-│ │ ├── ecr.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ ├── eks/ # AWS EKS cluster
-│ │ ├── eks.tf
-│ │ ├── aws_ebs_csi_driver.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ ├── rds/ # AWS RDS database
-│ │ ├── rds.tf
-│ │ ├── aurora.tf
-│ │ ├── shared.tf
-│ │ ├── variables.tf
-│ │ └── outputs.tf
-│ │
-│ ├── jenkins/ # Helm deployment of Jenkins
-│ │ ├── jenkins.tf
-│ │ ├── variables.tf
-│ │ ├── providers.tf
-│ │ ├── values.yaml
-│ │ └── outputs.tf
-│ │
-│ └── argo_cd/ # Helm deployment of Argo CD
-│ ├── argo_cd.tf
-│ ├── variables.tf
-│ ├── providers.tf
-│ ├── values.yaml
-│ ├── outputs.tf
-│ └── charts/ # Argo CD applications & repositories
-│ ├── Chart.yaml
-│ ├── values.yaml
-│ └── templates/
-│ ├── application.yaml
-│ └── repository.yaml
-│
-├── charts/
-│ └── django-app/
-│ ├── templates/
-│ │ ├── deployment.yaml
-│ │ ├── service.yaml
-│ │ ├── configmap.yaml
-│ │ └── hpa.yaml
-│ ├── Chart.yaml
-│ └── values.yaml # ConfigMap with environment variables
-│
-└── Django/
-├── app/
-├── Dockerfile
-├── Jenkinsfile
-└── docker-compose.yaml
+- Project/
+  - main.tf               — Main Terraform file for module connections
+  - backend.tf            — Backend config for Terraform state (S3 + DynamoDB)
+  - outputs.tf            — Common outputs for deployed resources
+  - modules/              — All Terraform modules
+    - s3-backend/         — S3 and DynamoDB backend storage
+      - s3.tf
+      - dynamodb.tf
+      - variables.tf
+      - outputs.tf
+    - vpc/                — VPC and networking
+      - vpc.tf
+      - routes.tf
+      - variables.tf
+      - outputs.tf
+    - ecr/                — AWS ECR for container images
+      - ecr.tf
+      - variables.tf
+      - outputs.tf
+    - eks/                — AWS EKS cluster
+      - eks.tf
+      - aws_ebs_csi_driver.tf
+      - variables.tf
+      - outputs.tf
+    - rds/                — AWS RDS database
+      - rds.tf
+      - aurora.tf
+      - shared.tf
+      - variables.tf
+      - outputs.tf
+    - jenkins/            — Helm deployment of Jenkins
+      - jenkins.tf
+      - variables.tf
+      - providers.tf
+      - values.yaml
+      - outputs.tf
+    - argo_cd/            — Helm deployment of Argo CD
+      - argo_cd.tf
+      - variables.tf
+      - providers.tf
+      - values.yaml
+      - outputs.tf
+      - charts/            — Argo CD applications & repositories
+        - Chart.yaml
+        - values.yaml
+        - templates/
+          - application.yaml
+          - repository.yaml
+  - charts/
+    - django-app/
+      - templates/
+        - deployment.yaml
+        - service.yaml
+        - configmap.yaml
+        - hpa.yaml
+      - Chart.yaml
+      - values.yaml
+  - Django/
+    - app/
+    - Dockerfile
+    - Jenkinsfile
+    - docker-compose.yaml
+
 
 
 ---
