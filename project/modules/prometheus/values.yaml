@@ -1,0 +1,57 @@
+alertmanager:
+  enabled: true
+  persistentVolume:
+    enabled: false 
+  # nodeSelector: {}
+  # tolerations: []
+
+kubeControllerManager:
+  enabled: false 
+kubeEtcd:
+  enabled: false 
+
+kubeScheduler:
+  enabled: false 
+kube-state-metrics:
+  enabled: true
+
+prometheus:
+  enabled: true
+  prometheusSpec:
+    retention: 10d 
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp2 
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi 
+    # nodeSelector: {}
+    # tolerations: []
+
+grafana:
+  enabled: true
+  defaultDashboardsEnabled: true 
+  # adminPassword: "your-strong-grafana-password" 
+  # ingress:
+  #   enabled: false 
+  #   hosts:
+  #     - grafana.yourdomain.com
+  # service:
+  #   type: LoadBalancer 
+  # nodeSelector: {}
+  # tolerations: []
+
+# exporter-kube-state-metrics:
+#   enabled: true
+
+# nodeExporter:
+#   enabled: true 
+
+# serviceMonitor:
+#   labels:
+#     release: prometheus-community-kube-prometheus-stack
+#     app.kubernetes.io/name: kube-prometheus-stack-grafana
+#     app.kubernetes.io/instance: kube-prometheus-stack
+#     app.kubernetes.io/component: grafana

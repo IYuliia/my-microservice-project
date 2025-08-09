@@ -1,0 +1,54 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:latest
+      command:
+        - cat
+      tty: true
+"""
+        }
+    }
+    environment {
+        AWS_REGION = 'us-east-1'
+        ECR_REPO = '123456789012.dkr.ecr.us-east-1.amazonaws.com/django-app'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        HELM_VALUES_FILE = "charts/django-app/values.yaml"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-org/django-app.git'
+            }
+        }
+        stage('Build & Push Image') {
+            steps {
+                container('kaniko') {
+                    sh """
+                    echo '[INFO] Building image...'
+                    /kaniko/executor --context . \
+                        --destination $ECR_REPO:$IMAGE_TAG \
+                        --cache=true
+                    """
+                }
+            }
+        }
+        stage('Update Helm Chart') {
+            steps {
+                sh """
+                sed -i 's|tag:.*|tag: ${IMAGE_TAG}|' $HELM_VALUES_FILE
+                git config --global user.email "ci@example.com"
+                git config --global user.name "CI Bot"
+                git add $HELM_VALUES_FILE
+                git commit -m "Update image tag to ${IMAGE_TAG}"
+                git push origin main
+                """
+            }
+        }
+    }
+}

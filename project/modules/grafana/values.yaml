@@ -1,0 +1,31 @@
+grafana:
+  adminPassword: "grafana-password" 
+  service:
+    type: ClusterIP 
+    port: 80
+  ingress:
+    enabled: false 
+    # hosts:
+    #   - grafana.yourdomain.com
+    # annotations:
+    #   kubernetes.io/ingress.class: nginx
+    #   nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  persistence:
+    enabled: true
+    storageClassName: gp2 
+    size: 5Gi
+  # nodeSelector: {}
+  # tolerations: []
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090 # URL до Prometheus
+        access: proxy
+        isDefault: true
+        version: 1
+        editable: true
+

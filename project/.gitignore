@@ -1,0 +1,19 @@
+# Python virtual environments
+venv/
+.venv/
+
+# Ignore Terraform state files and local directories
+*.tfstate
+*.tfstate.*
+.terraform/
+lesson-5/.terraform/
+
+
+# Terraform crash logs
+crash.log
+
+# Mac OS files
+.DS_Store
+
+# IDE files (example for VSCode)
+.vscode/
