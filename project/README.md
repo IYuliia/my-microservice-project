@@ -5,7 +5,7 @@
 Project/
 │
 ├── main.tf # Main Terraform file for module connections
-├── backend.tf # Backend configuration for storing Terraform state (S3 + DynamoDB)
+├── backend.tf # Backend config for Terraform state (S3 + DynamoDB)
 ├── outputs.tf # Common outputs for deployed resources
 │
 ├── modules/ # All Terraform modules
@@ -67,7 +67,7 @@ Project/
 │ │ ├── configmap.yaml
 │ │ └── hpa.yaml
 │ ├── Chart.yaml
-│ └── values.yaml
+│ └── values.yaml # ConfigMap with environment variables
 │
 └── Django/
 ├── app/
